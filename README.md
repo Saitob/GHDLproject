@@ -1,6 +1,8 @@
 # GHDLproject
 
 
-Currently requires Requests python library.
+Currently requires PyGithub python library.
 
-$ pip install requests
+$ pip install PyGithub
+
+
