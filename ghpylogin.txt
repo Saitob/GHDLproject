@@ -1,0 +1,4 @@
+Login details for GitHubDL.py
+User:
+
+Password:
