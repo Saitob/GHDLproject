@@ -1,0 +1,33 @@
+usage: GitHubDL.py [--help] <command> [<args>]
+
+NOTE: This script requires that you have pyGitHub python library and the Git executable installed.
+
+Features 2 main modes of operation:
+
+	-s		Searches through GitHub repositories based on provided criteria and returns 			with information relevant to the search result.
+
+	-d		Similar to the above but downloads the repositores that match the criteria.
+
+			Note: -d requires that you specify a directory for the download with --dldir 
+Arguments:
+
+	--key <>	Key phrase in the repository name.
+
+	--lang	<>	Specifies a programming language to search for.	
+	
+	--size		Specifies the minimum size of the repositories to search for (In MB).
+
+	--datecr	The earliest date the repository was created.
+
+	--dateupd	The last time the repository was updated.
+
+	--help		Provides some brief help about the project.
+
+-s only arguments:
+
+	--short		Shortens the information produced by the search result.
+
+-d only arguments:
+
+	--dldir <directory>		Specifies the directory for file download.
+					Note: Required each time you call -d
