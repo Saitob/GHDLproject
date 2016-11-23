@@ -31,32 +31,41 @@ GitHubDL.py [-d | -s][--key <keyword>][--datecr <date>][--dateupd <date>][--size
 
 ### Options:
 
--s | --search:		
+-s | --search:		Tells the script to do a search through github repositories and return with information about each match.
+			Info returned includes name, owner, date created, date last updated, programming language and size.
 
--d | --download:	Note: Requires that you specify a –dldir.
+-d | --download:	Tells the script to do a download. Searches through repositories similar to the --search option but instead
+			of returning with information on each match it downloads the repository with git to the specified directory.
+			
+			Note: Requires that you specify a –dldir.
 
 --key:			Takes a string to use as a keyword for the repository search
 
---datecr:		Takes a date string to filter the search results by. Format is yyyy-mm-dd. 				Simple date shows exact date matches. Accepts  >, < and = to enhance filter 			when given as quoted string.
+--datecr:		Takes a date string to filter the search results by. Format is yyyy-mm-dd. 
+			Simple date shows exact date matches. 
+			Accepts  >, < and = to enhance filter when given as quoted string.
 			Eg: --datecr ”>=2015-01-01”
 			You can also provide 2 dates split by '..' to search in a range.
 			Eg. --datecr ”2015-01-01..2016-01-01”
 
---dateupd:		Takes a date string to filter the search results by. Format is yyyy-mm-dd. 				Simple date shows exact date matches. Accepts  >, < and = to enhance filter 			when given as quoted string.
+--dateupd:		Takes a date string to filter the search results by. Format is yyyy-mm-dd. 
+			Simple date shows exact date matches. 
+			Accepts  >, < and = to enhance filter when given as quoted string.
 			Eg: --dateupd ”>=2015-01-01”
 			You can also provide 2 dates split by '..' to search in a range.
 			Eg. --dateupd ”2015-01-01..2016-01-01”
 
---size:			Takes a number and filters the search results by files that match the given 			size. Accepts  >, < and = to enhance filter when given as quoted string.
+--size:			Takes a number and filters the search results by files that match the given size.
+			Accepts  >, < and = to enhance filter when given as quoted string.
 			Eg: --size ”>=2”
 			You can also provide 2 numbers split by '..' to search in a range.
 			Eg. --size ”1..5”
 
---lang:			Filters the search by only listing repositories that are listed with the given 			programming language.
+--lang:			Filters the search by only listing repositories that are listed with the given programming language.
 
---short:			If enabled omits the individual item data for the search operation and instead 			just lists the summary.
+--short:		If enabled omits the individual item data for the search operation and instead just lists the summary.
 
---dldir:			Takes a filepath to use as a location for the download operation.
+--dldir:		Takes a filepath to use as a location for the download operation.
 			Note: Required for the download operation.
 
 -h | --help:		Shows some brief help text for the user.
