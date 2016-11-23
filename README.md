@@ -88,16 +88,17 @@ Paginated list: (http://pygithub.readthedocs.io/en/latest/utilities.html#github.
 
 We then iterate through the list and decide on an action depending on if it's a search or download operation.
 
-Search: Print information gathered from each repository object to the screen. Gather a summary of the total size of all the repositories so far.
+##### Search:
+Print information gathered from each repository object to the screen. Gather a summary of the total size of all the repositories so far.
 
 **A note on the repository size returned by the search**
 
 The search will return 3 different sizes:
 
-Repository size:
+###### Repository size:
 This is the size of the repository returned by the Github search API. It shows the size of all the files belonging to the repository.
 
-Fetch/Bare size and Pull size:
+###### Fetch/Bare size and Pull size:
 
 When git downloads a repository it includes a number of extra files belonging to the git executable into each repository. These files add extra size ontop of the repository size. There's no exact way to measure those sizes added to the project yet. The current representation is simply a rough estimate calculated as such:
 
@@ -105,12 +106,13 @@ Fetch/Bare: Repository size * 1.2
 
 Pull: Repository size * 2.4
 
-Download: Pass the repository object onward to dlGitRepo to start downloading.
+##### Download:
+Pass the repository object onward to dlGitRepo to start downloading.
 
 After this we print a short summary of the result, and done.
 
 
-dlGitRepo(gitRepo, gitPath):
+#### dlGitRepo(gitRepo, gitPath):
 
 Takes a repository (link below) object and a filepath.
 
@@ -120,7 +122,7 @@ Repository object: (http://pygithub.readthedocs.io/en/latest/github_objects/Repo
 
 
 
-git(*args):
+#### git(*args):
 
 Takes a list of arguments as strings and passes them to a subprocess commandline call to 'git' (ex: pull, clone).
 
