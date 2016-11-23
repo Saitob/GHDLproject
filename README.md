@@ -47,7 +47,7 @@ GitHubDL.py [-d | -s][--key <keyword>][--datecr <date>][--dateupd <date>][--size
 			Note: Requires that you specify a –dldir.
 
 
---key:<br>		Takes a string to use as a keyword for the repository search
+--key:<br>		Takes a string to use as a keyword for the repository search. The keyword is matched towards the repository 				name.
 
 
 --datecr:<br>		Takes a date string to filter the search results by. Format is yyyy-mm-dd. 
