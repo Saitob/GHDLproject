@@ -31,8 +31,8 @@ GitHubDL.py [-d | -s][--key <keyword>][--datecr <date>][--dateupd <date>][--size
 
 ### Options:
 
--s | --search:		Tells the script to do a search through github repositories and return with information about each match.
-			Info returned includes name, owner, date created, date last updated, programming language and size.
+-s | --search:<tab>	Tells the script to do a search through github repositories and return with information about each match.<br>
+<tab>			Info returned includes name, owner, date created, date last updated, programming language and size.
 
 -d | --download:	Tells the script to do a download. Searches through repositories similar to the --search option but instead
 			of returning with information on each match it downloads the repository with git to the specified directory.
