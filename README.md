@@ -1,5 +1,12 @@
 # GHDLproject
 
+1. Purpose
+2. Usage
+3. Dependencies
+4. Functions
+5. Useful links
+
+
 ### Purpose:
 
 The purpose of the project is a system that can communicate with the github API, search through its repositories and download and update a large number  of repositories that match the search result.
@@ -7,8 +14,7 @@ The purpose of the project is a system that can communicate with the github API,
 The system is called and recives its arguments through commandline. It has 2 major operations:
 
 
-*-s | --search : Searches through github repositores based on provided search terms and returns with data 
-on each of the matching results, along with a short summary at the end.
+* -s | --search : Searches through github repositores based on provided search terms and returns with data on each of the matching results, along with a short summary at the end.
 
 Providing –short at the end of the call only returns the short summary as a result of the search.
 
@@ -16,7 +22,7 @@ Takes –key, --datecr, --dateupd, --size, --lang, --short
 
 
 
-*-d | --download: Similar to Search but rather than returning data for each matching result it does a git clone (or git pull for already downloaded repositories) on each matching result to the provided filepath.
+* -d | --download: Similar to Search but rather than returning data for each matching result it does a git clone (or git pull for already downloaded repositories) on each matching result to the provided filepath.
 
 Takes –key, --datecr, --dateupd, --size, --lang, --dldir
 
@@ -99,6 +105,13 @@ Can be installed with  -  '$pip install pygithub'
 Github executable:
 https://desktop.github.com/
 
+#### Recommended:
+
+Login:
+
+Included with the project is a text file storing username and password for a github account, named ghpylogin.txt. The username should be written under the line that says 'Username:' and password should be written under the line 'Password:. 
+The script will read off this file and use the credentials to authenticate with the github servers.
+This gives a higher rate limit for the search API connection and allows the download to go much faster.
 
 ### Functions:
 
