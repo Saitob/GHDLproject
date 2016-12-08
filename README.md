@@ -94,7 +94,15 @@ Default:<br>		Tells the script to do a search through github repositories and re
 			
 
 --lang:<br>		Filters the search by only listing repositories that are listed with the given programming language.
-			If the ghdllang.txt file is in the same folder as the script a limited form of regex is available when entering 			language. ghdllang.txt contains a list of programming languages the regex will attempt to match to and only 				continue to run the script if a match is found. The available regex is '.' and '*' and the program will match 				to the first match found.
+			
+			
+			If the ghdllang.txt file is in the same folder as the script a limited form of regex is available when entering 			
+			language.
+			
+			ghdllang.txt contains a list of programming languages the regex will attempt to match to and only 					
+			continue to run the script if a match is found.
+			
+			The available regex is '.' and '*' and the program will match to the first match found.
 			
 			ex. '.' will match 'c'. 'javasc.*' will match 'javascript'.
 			
@@ -188,21 +196,21 @@ Takes a list of arguments as strings and passes them to a subprocess commandline
 Returns after executing the subprocess call.
 
 
-##### printRepoToScreen(repo):
+#### printRepoToScreen(repo):
 
 Takes a repository object as an argument.
 
 Prints the datafields it can gather from the repository to the screen.
 
 
-##### writeRepoToFile(repo, file):
+#### writeRepoToFile(repo, file):
 
 Takes a repository object and file path as arguments.
 
 Writes out the datafields it can gather from the repository to the file.
 
 
-###### printSearchSummary(totalCount, totRepoSize):
+#### printSearchSummary(totalCount, totRepoSize):
 
 Takes as arguments: The total number of hits recieved by the repository size and the total size of the repositories processed so far.
 
