@@ -1,33 +1,57 @@
-usage: GitHubDL.py [--help] <command> [<args>]
+usage: GHDL.py [-d <path to directory>][--key <keyword>][--datecr <date>][--dateupd <date>][--size <int>][--stars <int>]
+		[--lang <keyword>][--short][--output <directory>][--help]
+
+GitHubDL has two main modes of operation:
+
+*By default it will search through repositories on github and return with some data on each matching result. 
+
+*The second mode, -d will instead download the matching repositories to the provided directory path,
+or attempt to update them if they already exist.
 
 NOTE: This script requires that you have pyGitHub python library and the Git executable installed.
 
 Features 2 main modes of operation:
 
-	-s		Searches through GitHub repositories based on provided criteria and returns 			with information relevant to the search result.
+	Default		Searches through GitHub repositories based on provided criteria and returns with information
+			relevant to the search result.
 
-	-d		Similar to the above but downloads the repositores that match the criteria.
+	-d <directory>	Enables download function. Works similar to the default mode but downloads
+			the repositores that match the criteria.
+			Requires that you include a valid directory path for the download.
 
-			Note: -d requires that you specify a directory for the download with --dldir 
 Arguments:
 
-	--key <>	Key phrase in the repository name.
+	--key <key>		Filters search results by matching the specified keywords or phrase
+				to the names of repositories on github.
+				Github supports the following characters in repository names: A-Z, a-z, 0-9, '.', '_', '-'.
 
-	--lang	<>	Specifies a programming language to search for.	
+	--lang <language>	Filters search results by the specified programming language.
+				Supported characters are A-Z, a-z, 0-9, '+', '-', '#'.
+				Has limited regex support for * and . if the ghdllang.txt file is provided.	
 	
-	--size		Specifies the minimum size of the repositories to search for (In MB).
+	--size <number>		Limits the size of the repositories in the search to the size specified(In MB).
+				When entered as quoted string supports <, >, = and a range with .. to further specify results.
+				Eg: --size ">=2" and --size "2..5"
+	
+	--stars <number>	Filters search results by the number of stars held.
+				When entered as quoted string supports <, >, = and a range with .. to further specify results.
+				Eg: --stars ">=2" and --stars "2..5"
 
-	--datecr	The earliest date the repository was created.
+	--datecr<yyyy-mm-dd>	Limits search results to those created on the entered date.
+				Format is yyyy-mm-dd. 
+				When entered as quoted string supports <, >, = and a range with .. to further specify results.
+				Eg: --datecr ">=2015-01-01" and --datecr "2015-01-01..2016-01-01"
 
-	--dateupd	The last time the repository was updated.
+	--dateupd<yyyy-mm-dd>	Limits search results to those last updated on the entered date.
+				Format is yyyy-mm-dd.
+				When entered as quoted string supports <, >, = and a range with .. to further specify results.
+				Eg: --dateupd ">=2015-01-01" and --dateupd "2015-01-01..2016-01-01"
+	
+	--output <filepath>	Outputs the printed data to the specified file. The parameter must be a valid file path.
 
-	--help		Provides some brief help about the project.
+	--help			Provides some brief help about the script.
 
--s only arguments:
+Default mode only arguments:
 
 	--short		Shortens the information produced by the search result.
 
--d only arguments:
-
-	--dldir <directory>		Specifies the directory for file download.
-					Note: Required each time you call -d
