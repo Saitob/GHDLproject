@@ -139,6 +139,7 @@ Included with the project is a text file storing username and password for a git
 The script will read off this file and use the credentials to authenticate with the github servers.
 This gives a higher rate limit for the search API connection and allows the download to go much faster.
 
+
 ### Functions:
 
 #### Main:
