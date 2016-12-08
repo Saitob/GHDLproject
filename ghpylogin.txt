@@ -1,4 +1,4 @@
-Login details for GitHubDL.py
+Login details for GHDL.py
 User:
 
 Password:
