@@ -3,6 +3,7 @@
 
 #Used to handle command-line arguments
 import sys, argparse, getopt, subprocess
+from subprocess import Popen, PIPE, STDOUT
 #Regular expressions
 import re
 #Gives access to sleep command
@@ -71,78 +72,73 @@ def printRepoToScreen(repo):
 def writeRepoToFile(repo, file):
 
     try:
-        file.write(repo.name)
+        file.write(repo.name + ';')
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
                     
-    file.write(";")
     try:
-        file.write(repo.description)
+        file.write(repo.description + ';')
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
 
-    file.write(";")
     try:
-        file.write(repo.owner.login)
+        file.write(repo.owner.login + ';')
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
                                 
-    file.write(";")
     try:
-        file.write(str(repo.created_at))
+        file.write(str(repo.created_at) + ';')
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
                     
-    file.write(";")
     try:
-        file.write(str(repo.updated_at))
+        file.write(str(repo.updated_at) + ';')
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
 
-    file.write(";")
     try:
-        file.write(str(round(repo.size/1000)) + "MB")
+        file.write(str(round(repo.size/1000)) + "MB;")
     except:
-        file.write(">>Error printing field data.<<")
+        file.write(">>Error printing field data.<<;")
 
-    file.write("\n")
     try:
         file.write(repo.language + '\n')
     except:
         file.write(">>Error printing field data.<<\n")
 
-#Prints out a summary of all the repository items processesed so far. Takes two ints: The total number of hits returned by the search and the total size of the repositories processed so far
+#Prints out a summary of all the repository items processesed so far. Takes three ints: The total number of hits returned by the search, the total size of the repositories processed so far and the number of repositories processed
 #The rounding is done because github returns the size in KB, so we round it up to MB and GB.
 #Estimated fetch and pull sizes: When downloading a repo with Git, fetch or pull, it includes extra files that make it exceed the size returned by the search function.
 #I have found no great way to accurately estimate these sizes so here it simply uses a rough estimate      
-def printSearchSummary(totalCount, totRepoSize):
+def printSearchSummary(totalCount, totRepoSize, idNumber):
     try:        
-        print("\nTotal Nr. of repos found:\t", totalCount, "\nSize of counted repos:\t\t", round(totRepoSize/1000, 1), " MB (", round((totRepoSize/1000000), 2), " GB)",
+        print("\nTotal Nr. of repos found:\t", totalCount, "\nNr. of repos processed:\t\t", idNumber, "\nSize of counted repos:\t\t", round(totRepoSize/1000, 1), " MB (", round((totRepoSize/1000000), 2), " GB)",
                 "\nEstimated fetch download size:\t", round((totRepoSize*1.2)/1000, 1), " MB (", round(((totRepoSize*1.2)/1000000), 2), " GB)",
                 "\nEstimated pull download size:\t", round((totRepoSize*2.4)/1000, 1), " MB (", round(((totRepoSize*2.4)/1000000), 2), " GB)")    #Data summary
     except:
         print("Error printing search summary to screen.")
         
 
-#Used to start the git clone/pulls. Takes a repository object from pyGithub and a directory path as arguments.
+#Used to start the git clone/pulls. Takes a repository object from pyGithub and a file path as arguments.
 def dlGitRepo(gitRepo, dirPath, outputDir):
 
-    nrOfDownloaded = 0
-    nrOfUpdated = 0
+    codeReturned = 0
+    
     try:
         gitContent = gitRepo.get_contents('')
 
         #If the filepath already exists and has items in it clone would fail, so instead we call a pull for the same location
         if os.path.exists(os.path.join(dirPath, gitRepo.full_name)):
-    
-            git("-C", os.path.join(dirPath, gitRepo.full_name), "pull", gitRepo.html_url)
 
-            nrOfDownloaded += 1
-        
+            codeReturned = git("-C", os.path.join(dirPath, gitRepo.full_name), "pull", gitRepo.html_url, output = outputDir)
+                
         else:   # Include --bare ?
-            git("clone", "--single-branch", gitRepo.clone_url, os.path.join(os.path.join(dirPath, gitRepo.owner.login), gitRepo.name))
+            codeReturned = git("clone", "--single-branch", gitRepo.clone_url, os.path.join(os.path.join(dirPath, gitRepo.owner.login), gitRepo.name), output = outputDir)
 
-            nrOfUpdated += 1
+        if codeReturned != 0 and outputDir != '':
+            with open(outputDir, 'a') as out:
+                out.write("Failed writing to: ", os.path.join(dirPath, gitRepo.full_name))
+            
             
     except subprocess.CalledProcessError as e:
         print(e.output)
@@ -157,21 +153,27 @@ def dlGitRepo(gitRepo, dirPath, outputDir):
         print("Unknown exception in dlGitRepo")
         exit()
 
-#Used to call git by commandline. *args should be a list of strings ex: ["clone", "--single-branch"]
-def git(*args):
-    #try:
-    with open("dl.txt", "a") as out:
-        return subprocess.check_call(['git'] + list(args), stdout = out)        
-    '''except OSError as e:
-        print(e)
-        exit()
-    except KeyboardInterrupt:
-        print("Exited with keyboard interrupt")
-        exit()
-    except:
-        print("Unknown exception in git subprocess")
-        exit()'''
+    # 0 is success, anything else an error.
+    return codeReturned
 
+#Used to call git with a subprocess call to commandline. *args should be a list of strings ex: ["clone", "--single-branch"], output should be a valid filepath
+def git(*args, output):
+
+    #0 is success, anything else an error
+    codeToReturn = 0
+    if output == '':
+        return subprocess.check_call(['git'] + list(args))        
+    else:
+        p = Popen(['git'] + list(args), stdout = PIPE, stderr = STDOUT, bufsize = 1, universal_newlines = True)
+        with open(output, 'a') as out:
+            for line in p.stdout:
+                print(line, end='')
+                out.write(line)
+
+        p.wait()
+        return p.returncode
+    
+    
 # Main starts here!
 def main(argv):
 
@@ -184,11 +186,12 @@ def main(argv):
     regExPattern = ''               #Stores a regular expression pattern for use in input validation
     totRepoSize = 0                 #Stores the total size of repositores scanned so far
     totalCount = 0                  #Used to hold the total number of repositories found in the search
-    number = 0                      #The number of repositories processed by the search
+    idNumber = 0                    #The number of repositories processed by the search
     earliestDate = 2007-10-29       #The earliest date for a repository uploaded to github
     currentDate = datetime.date.today() #Todays date
     user = ''                       #Holds username to be sent to github
     passwrd = ''                    #Holds password to be sent to github
+    nrOfFailedDownloads = 0         #Tracks the number of failed downloads
 
     #Argparse block defining how the system accepts commandline arguments. Also lets us define some useful info to print with the -h option
     parser = argparse.ArgumentParser(prog="GHDL.py", usage="%(prog)s [-d <path to directory>][--key <keyword>][--datecr <date>][--dateupd <date>][--size <int>][--stars <int>][--lang <keyword>][--short][--output <directory>][--help]",
@@ -391,21 +394,19 @@ def main(argv):
                 #Checks through every item in a page
                 for repo in repoPage:
 
-                    #Counts up the number of items processed so far and the total size returned by the items.
-                    number += 1
-                    totRepoSize += repo.size
-
                     #If short summary is not enabled we print the individual item data to the screen
-                    if setSrchOrDL == 0 and shortSummary == 0:
+                    if shortSummary == 0:
                         printRepoToScreen(repo)         #Takes a repository item
 
                     #If an output path is set we print the item data to file
                     if(outputDir != ''):
-                        print("Writing to: ", outputDir)
                         with open(outputDir, 'a') as file:
-                            file.write(str(number) + ';')       #Writes an index number to the file along with a seperator
+                            file.write(str(idNumber) + ';')       #Writes an index number to the file along with a seperator
                             writeRepoToFile(repo, file)         #Takes a repository item and a valid file path
-                    
+
+                    #Counts up the number of items processed so far and the total size returned by the items.
+                    idNumber += 1
+                    totRepoSize += repo.size                    
                     
             except RateLimitExceededException as e:             #Incase we hit the rate limit
                 print("Github error code: ", e.status, ", ", e.data['message'])
@@ -414,9 +415,9 @@ def main(argv):
                 i -= i
             except GithubException as e:                #There are several GithubExceptions, not all have the same output
                 print("Github error code: ", e.status, ", ", e.data['message'])
-                if(number == 1000):
+                if(idNumber == 1000):
                     print("The items returned by the search exceed 1000. Github has a limit of 1000 items returned per search query.\nPlease modify your search parameters so that the Nr. of items returned does not exceed 1000.\n")
-                    printSearchSummary(totalCount, totRepoSize)
+                    printSearchSummary(totalCount, totRepoSize, idNumber)
                     exit()
                 else:
                     if 'message' in e.data['errors'][0]:
@@ -437,21 +438,82 @@ def main(argv):
                 print("Unknown error encountered in search function.")
                 exit()
 
-        #Prints a summary of the data gathered from all the repository items. Takes two ints, the total number of hits returned by the search, and the total size of the processed items
-        printSearchSummary(totalCount, totRepoSize)
+        #Prints a summary of the data gathered from all the repository items. Takes three ints, the total number of hits returned by the search, the total size of the processed items and the number of processed items
+        printSearchSummary(totalCount, totRepoSize, idNumber)
 
     elif setSrchOrDL == 1:  #DL part starts here
                 
-        for repo in repositories:
-            totRepoSize += repo.size
+        #Repositores is given a paginated list of repository objects. These are further split into 'pages' of 20 to 100 entries per page
+        #The below code is to iterate through the paginated list
+        for i in range(0, int(math.ceil(repositories.totalCount/100))):    #The number divided by should match the number of entries recived per page
 
+            #Check the level of the rate limit
+            print("Rate limit: ", g.rate_limiting, "\nWaiting...")
+
+            #The rate limit is 30 per minute. Every minute it will shoot back up to 30, so we make sure we never exceed it.
+            if g.rate_limiting[0] < 5:
+                time.sleep(10)
+            elif g.rate_limiting[0] < 2:
+                time.sleep(20)
+
+            #Keeps the call from timing out by re-paging it every couple of items. I think...    
+            if(i%3 == 0):
+                repositories = g.search_repositories(prepQuery)
+
+            #Tries to load a new repository page for processing. A page has 20..100 entries, editable in the call.
             try:
-                dlGitRepo(repo, dlDir, outputDir)
+                repoPage = repositories.get_page(i)
+
+                #Checks through every item in a page
+                for repo in repoPage:
+
+                    if(outputDir != ''):
+                        with open(outputDir, 'a') as file:
+                            file.write(str(idNumber) + ';')       #Writes an index number to the file along with a seperator
+
+                    #Recieves a return code from dlGitRepo. 0 is a success, anything else is an error in the download.
+                    codeReturned = 0
+                    codeReturned = dlGitRepo(repo, dlDir, outputDir)
+                    if codeReturned != 0:
+                        nrOfFailedDownloads +=1
+                        
+              #Counts up the number of items processed so far and the total size returned by the items.
+                    idNumber += 1
+                    totRepoSize += repo.size                    
+                    
+            except RateLimitExceededException as e:             #Incase we hit the rate limit
+                print("Github error code: ", e.status, ", ", e.data['message'])
+                print("Unexpectedly encountered rate limit. Waiting 60 seconds to ensure limit is reset.")
+                time.sleep(60)
+                i -= i
+            except GithubException as e:                #There are several GithubExceptions, not all have the same output
+                print("Github error code: ", e.status, ", ", e.data['message'])
+                if(idNumber == 1000):
+                    print("The items returned by the search exceed 1000. Github has a limit of 1000 items returned per search query.\nPlease modify your search parameters so that the Nr. of items returned does not exceed 1000.\n")
+                    printSearchSummary(totalCount, totRepoSize, idNumber)
+                    exit()
+                else:
+                    if 'message' in e.data['errors'][0]:
+                        print(e.data['errors'][0]['message'])
+                    exit()
             except OSError as e:
                 print(e)
+                print("Connection error. Could not connect to Github.")
+                exit()
+            except BadAttributeException as e:
+                print("Github error code: ", e.status, ", ", e.data['message'])
+                print("Unexpected value returned by github.")
+                exit()
+            except KeyboardInterrupt:
+                print("Exited with keyboard interrupt.")
+                exit()
+            #except:
+                print("Unknown error encountered in download function.")
                 exit()
 
-        print("\nNr of repos downloaded: ", repositories.totalCount)
+        #Prints a summary of the data gathered from all the repository items. Takes three ints, the total number of hits returned by the search, the total size of the processed items and the number of processed items
+        printSearchSummary(totalCount, totRepoSize, idNumber)
+        print("Failed downloads:\t\t", nrOfFailedDownloads)
 
 if __name__ == "__main__":
     try: 
