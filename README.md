@@ -26,7 +26,7 @@ Takes --key, --datecr, --dateupd, --size, --stars, --lang, --short, --output
 
 * -d | --download: Similar to Search but rather than returning data for each matching result it does a git clone (or git pull for already downloaded repositories) on each matching result to the provided filepath.
 
-Takes --key, --datecr, --dateupd, --size, --stars, --lang
+Takes --key, --datecr, --dateupd, --size, --stars, --lang, --output
 
 
 The project is written in Python 3 and primarily intended to be used on a Linux system.
@@ -112,8 +112,14 @@ Default:<br>		Tells the script to do a search through github repositories and re
 --short:<br>		If enabled omits the individual item data for the search operation and instead just lists the summary.
 
 
---output:<br>		If provided a valid filepath will output the search data to the file.
-			Note: Has no proper filter for valid file endings. This falls on the user.
+--output:<br>		If provided a valid filepath will output the search data or git output to the file.
+
+
+			Note 1: Has no proper filter for valid file endings. This falls on the user.
+			
+			Note 2: Output for search will overwrite the contents of the target file.
+			
+			Note 3: The git output is somewhat messy and tricky to format to print. It is currently provided as-is.
 
 
 -h | --help:<br>	Shows some brief help text for the user.
@@ -180,9 +186,9 @@ Pass the repository object onward to dlGitRepo to start downloading.
 After this we print a short summary of the result, and done.
 
 
-#### dlGitRepo(gitRepo, gitPath):
+#### dlGitRepo(gitRepo, gitPath, outputDir):
 
-Takes a repository (link below) object and a filepath.
+Takes a repository (link below) object and two filepaths, the download directory and an output directory for the text data.
 
 Checks to see if a directory already exists for the repository name. If true passes arguments for a git pull to git(*args), if false it instead passes a git clone.
 
@@ -190,11 +196,12 @@ Repository object: (http://pygithub.readthedocs.io/en/latest/github_objects/Repo
 
 
 
-#### git(*args):
+#### git(*args, output):
 
 Takes a list of arguments as strings and passes them to a subprocess commandline call to 'git' (ex: pull, clone).
+Second argument can be a filepath for output of the git data stream.
 
-Returns after executing the subprocess call.
+Returns after executing the subprocess call. 0 is a succesful call, anything else is an error.
 
 
 #### printRepoToScreen(repo):
@@ -211,9 +218,10 @@ Takes a repository object and file path as arguments.
 Writes out the datafields it can gather from the repository to the file.
 
 
-#### printSearchSummary(totalCount, totRepoSize):
+#### printSearchSummary(totalCount, totRepoSize, idNumber):
 
-Takes as arguments: The total number of hits recieved by the repository size and the total size of the repositories processed so far.
+Takes as arguments: The total number of hits recieved by the repository size, the total size of the repositories processed so far
+and the number of items processed so far.
 
 Prints out a summary of the data gathered from the search to the screen.
 
