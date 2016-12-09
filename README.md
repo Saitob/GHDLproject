@@ -129,16 +129,31 @@ Default:<br>		Tells the script to do a search through github repositories and re
 
 This project uses and requires PyGithub and the Github executable. These can be found here:
 
+
 PyGithub:
 https://github.com/PyGithub/PyGithub
 
 Can be installed with  -  '$pip install pygithub'
+
 
 Github executable:
 https://desktop.github.com/
 
 
 You will also need to have a version of python 3 or later with ssl support installed.
+https://www.python.org/
+
+
+How to check if your python3 install has ssl support:
+
+		$python3
+		
+		>>>import http.client
+		
+		>>>import ssl
+		
+		>>>http.client.HTTPSConnection
+
 
 
 #### Recommended:
