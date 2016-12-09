@@ -137,6 +137,10 @@ Can be installed with  -  '$pip install pygithub'
 Github executable:
 https://desktop.github.com/
 
+
+You will also need to have a version of python 3 or later with ssl support installed.
+
+
 #### Recommended:
 
 Login:
