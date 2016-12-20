@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# coding=utf-8
+#coding:utf-8
 
 #Used to handle command-line arguments
 import sys, argparse, getopt, subprocess
@@ -57,7 +57,7 @@ def printRepoToScreen(repo):
 
     print("Size:")
     try:
-        print(round(repo.size/1000), "MB")
+        print(repo.size, "kB")
     except:
         print(">>Error printing field data.<<")
 
@@ -79,7 +79,10 @@ def writeRepoToFile(repo, file):
     try:
         file.write(repo.description + ';')
     except:
-        file.write(">>Error printing field data.<<;")
+        if repo.description == None:
+            file.write("None;")
+        else:
+            file.write(">>Error printing field data.<<;")
 
     try:
         file.write(repo.owner.login + ';')
@@ -97,7 +100,7 @@ def writeRepoToFile(repo, file):
         file.write(">>Error printing field data.<<;")
 
     try:
-        file.write(str(round(repo.size/1000)) + "MB;")
+        file.write(str(repo.size) + "kB;")
     except:
         file.write(">>Error printing field data.<<;")
 
@@ -107,7 +110,7 @@ def writeRepoToFile(repo, file):
         file.write(">>Error printing field data.<<\n")
 
 #Prints out a summary of all the repository items processesed so far. Takes three ints: The total number of hits returned by the search, the total size of the repositories processed so far and the number of repositories processed
-#The rounding is done because github returns the size in KB, so we round it up to MB and GB.
+#The rounding is done because github returns the size in kB, so we round it up to MB and GB.
 #Estimated fetch and pull sizes: When downloading a repo with Git, fetch or pull, it includes extra files that make it exceed the size returned by the search function.
 #I have found no great way to accurately estimate these sizes so here it simply uses a rough estimate      
 def printSearchSummary(totalCount, totRepoSize, idNumber):
@@ -201,7 +204,7 @@ def main(argv):
     parser.add_argument("--key", help="Filters search results by matching the specified keywords or phrase to the names of repositories on github. Github supports the following characters in repository names: A-Z, a-z, 0-9, '.', '_', '-'.")
     parser.add_argument("--datecr", help="Limits search results to those created on the entered date. Format is yyyy-mm-dd. When entered as quoted string supports <, >, = and a range with .. to further specify results. Eg: --datecr \">=2015-01-01\" and --datecr \"2015-01-01..2016-01-01\"")
     parser.add_argument("--dateupd", help="Limits search results to those last updated on the entered date. Format is yyyy-mm-dd. When entered as quoted string supports <, >, = and a range with .. to further specify results. Eg: --dateupd \">=2015-01-01\" and --dateupd \"2015-01-01..2016-01-01\"")
-    parser.add_argument("--size", help="Limits the size of the repositories in the search to the size specified(In MB). When entered as quoted string supports <, >, = and a range with .. to further specify results. Eg: --size \">=2\" and --size \"2..5\"")
+    parser.add_argument("--size", help="Limits the size of the repositories in the search to the size specified(In kB). When entered as quoted string supports <, >, = and a range with .. to further specify results. Eg: --size \">=2\" and --size \"2..5\"")
     parser.add_argument("--lang", help="Filters search results by the specified programming language. Supported characters are A-Z, a-z, 0-9, '+', '-', '#'. Has limited regex support for * and . if the ghdllang.txt file is provided.")
     parser.add_argument("--stars", help="Filters search results by the number of stars held. When entered as quoted string supports <, >, = and a range with .. to further specify results. Eg: --stars \">=2\" and --stars \"2..5\"")
     parser.add_argument("--short", action="store_true", help="Shortens data presented when using the search function")
@@ -400,7 +403,7 @@ def main(argv):
 
                     #If an output path is set we print the item data to file
                     if(outputDir != ''):
-                        with open(outputDir, 'a') as file:
+                        with open(outputDir, 'a', encoding='utf-8') as file:
                             file.write(str(idNumber) + ';')       #Writes an index number to the file along with a seperator
                             writeRepoToFile(repo, file)         #Takes a repository item and a valid file path
 
