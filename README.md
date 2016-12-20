@@ -75,7 +75,7 @@ Default:<br>		Tells the script to do a search through github repositories and re
 			Eg. --dateupd ”2015-01-01..2016-01-01”
 
 
---size:<br>		Takes a number and filters the search results by files that match the given size (In MB).
+--size:<br>		Takes a number and filters the search results by files that match the given size (In KB).
 
 			Accepts  >, < and = to enhance filter when given as quoted string.
 			Eg: --size ”>=2”
