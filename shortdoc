@@ -29,7 +29,7 @@ Arguments:
 				Supported characters are A-Z, a-z, 0-9, '+', '-', '#'.
 				Has limited regex support for * and . if the ghdllang.txt file is provided.	
 	
-	--size <number>		Limits the size of the repositories in the search to the size specified(In MB).
+	--size <number>		Limits the size of the repositories in the search to the size specified(In KB).
 				When entered as quoted string supports <, >, = and a range with .. to further specify results.
 				Eg: --size ">=2" and --size "2..5"
 	
